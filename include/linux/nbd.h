@@ -27,6 +27,7 @@
 #define NBD_SET_SIZE_BLOCKS	_IO( 0xab, 7 )
 #define NBD_DISCONNECT  _IO( 0xab, 8 )
 #define NBD_SET_TIMEOUT _IO( 0xab, 9 )
+#define NBD_SET_FLAGS   _IO( 0xab, 10 )
 
 enum {
 	NBD_CMD_READ = 0,
@@ -43,8 +44,12 @@ enum {
 #include <linux/mutex.h>
 
 /* values for flags field */
-#define NBD_READ_ONLY 0x0001
-#define NBD_WRITE_NOCHK 0x0002
+#define NBD_FLAG_HAS_FLAGS	(1 << 0)	/* Flags are there */
+#define NBD_FLAG_READ_ONLY	(1 << 1)	/* Device is read-only */
+#define NBD_FLAG_SEND_FLUSH	(1 << 2)	/* Send FLUSH */
+#define NBD_FLAG_SEND_FUA	(1 << 3)	/* Send FUA (Force Unit Access) */
+#define NBD_FLAG_ROTATIONAL	(1 << 4)	/* Use elevator algorithm - rotational media */
+#define NBD_FLAG_SEND_TRIM	(1 << 5)	/* Send TRIM (discard) */
 
 struct request;
 

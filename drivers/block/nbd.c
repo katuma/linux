@@ -6,6 +6,7 @@
  * 
  * Copyright 1997-2000, 2008 Pavel Machek <pavel@ucw.cz>
  * Parts copyright 2001 Steven Whitehouse <steve@chygwyn.com>
+ * Flags support 2012 Karel Tuma <karel.tuma@gmail.com>
  *
  * This file is released under GPLv2 or later.
  *
@@ -468,7 +469,7 @@ static void nbd_handle_req(struct nbd_device *nbd, struct request *req)
 	nbd_cmd(req) = NBD_CMD_READ;
 	if (rq_data_dir(req) == WRITE) {
 		nbd_cmd(req) = NBD_CMD_WRITE;
-		if (nbd->flags & NBD_READ_ONLY) {
+		if (nbd->flags & NBD_FLAG_READ_ONLY) {
 			dev_err(disk_to_dev(nbd->disk),
 				"Write on read-only\n");
 			goto error_out;
@@ -649,6 +650,10 @@ static int __nbd_ioctl(struct block_device *bdev, struct nbd_device *nbd,
 
 	case NBD_SET_TIMEOUT:
 		nbd->xmit_timeout = arg * HZ;
+		return 0;
+
+	case NBD_SET_FLAGS:
+		nbd->flags = arg;
 		return 0;
 
 	case NBD_SET_SIZE_BLOCKS:
